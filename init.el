@@ -31,13 +31,17 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     markdown
      ;; ace-motion
      yaml
      lua
      javascript
+     mgithub
      ;; haskell
      (haskell :variables
-              haskell-completion-backend 'ghc-mod
+              ;; haskell-completion-backend 'ghc-mod
+              ;; haskell-completion-backend 'intero
+              haskell-completion-backend 'ghci
               haskell-enable-hindent-style "johan-tibell"
               )
      agda
@@ -60,7 +64,7 @@ values."
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
      ;; spell-checking
-     syntax-checking
+     ;; syntax-checking
      ;; version-control
      )
    ;; List of additional packages that will be installed without being
@@ -69,13 +73,14 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
                                       avy
-                                      ghc-mod
+                                      ghc
                                       let-alist
                                       )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages '(
+                                    tern                 ;; "Tern binary not found (js)"
                                     evil-unimpaired      ;; Installation fails
                                     exec-path-from-shell ;; May cause slow startup
                                     org-projectile
@@ -267,7 +272,7 @@ values."
    ;; If non nil smooth scrolling (native-scrolling) is enabled. Smooth
    ;; scrolling overrides the default behavior of Emacs which recenters point
    ;; when it reaches the top or bottom of the screen. (default t)
-   dotspacemacs-smooth-scrolling nil
+   dotspacemacs-smooth-scrolling t
    ;; Control line numbers activation.
    ;; If set to `t' or `relative' line numbers are turned on in all `prog-mode' and
    ;; `text-mode' derivatives. If set to `relative', line numbers are relative.
@@ -416,9 +421,11 @@ you should place your code here."
   (dotspacemacs/emacs-lisp/custom-bindings)
 
   ;; Haskell
-  (add-hook 'haskell-mode-hook #'(lambda () (modify-syntax-entry ?' "w")))
-  (dotspacemacs/haskell/functions)
-  (dotspacemacs/haskell/custom-bindings)
+  (with-eval-after-load 'haskell
+    (add-hook 'haskell-mode-hook #'(lambda () (modify-syntax-entry ?' "w")))
+    (dotspacemacs/haskell/functions)
+    (dotspacemacs/haskell/custom-bindings)
+    )
   ;; (setq haskell-interactive-mode-eval-mode 'haskell-mode)
 
   ;; ahs-default-symbol-regexp
@@ -443,7 +450,7 @@ you should place your code here."
   ;; Haskell:
   ;; https://github.com/serras/emacs-haskell-tutorial/blob/master/tutorial.md
   ;; https://github.com/chrisdone/structured-haskell-mode
-  ;; https://github.com/alanz/HaRe
+  ;; https://github.com/alanz/HaRe ;; Refactor
 
   ;; # Spacemacs
   ;; Move custom-set to new file:
@@ -480,7 +487,7 @@ you should place your code here."
  '(haskell-process-log t)
  '(package-selected-packages
    (quote
-    (unfill mwim evil-avy magit-gh-pulls github-search github-clone github-browse-file gist gh marshal logito pcache ht gitignore-mode magit git-commit ghub magit-popup with-editor flycheck-pos-tip pos-tip flycheck-haskell flyspell-correct-helm flyspell-correct auto-dictionary org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download htmlize gnuplot yaml-mode ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox orgit org-bullets open-junk-file neotree move-text magit-gitflow macrostep lua-mode lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc intero info+ indent-guide hungry-delete hlint-refactor hl-todo hindent highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-hoogle helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag haskell-snippets google-translate golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link fuzzy flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word company-tern company-statistics company-ghci company-ghc company-cabal column-enforce-mode coffee-mode cmm-mode clean-aindent-mode auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (magithub ghub+ apiwrap mmm-mode markdown-toc markdown-mode gh-md unfill mwim evil-avy magit-gh-pulls github-search github-clone github-browse-file gist gh marshal logito pcache ht gitignore-mode magit git-commit ghub magit-popup with-editor flycheck-pos-tip pos-tip flycheck-haskell flyspell-correct-helm flyspell-correct auto-dictionary org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download htmlize gnuplot yaml-mode ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox orgit org-bullets open-junk-file neotree move-text magit-gitflow macrostep lua-mode lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc intero info+ indent-guide hungry-delete hlint-refactor hl-todo hindent highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-hoogle helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag haskell-snippets google-translate golden-ratio gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link fuzzy flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word company-tern company-statistics company-ghci company-ghc company-cabal column-enforce-mode coffee-mode cmm-mode clean-aindent-mode auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
